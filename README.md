@@ -94,3 +94,73 @@ npm start
 # Database setup (PostgreSQL)
 createdb telemedicine
 python manage.py migrate
+
+🏥 Telemedicine Platform Architecture (Flowchart Style)
+less
+Copy
+Edit
+[ User (Doctor/Patient/Admin) ]
+            |
+            v
+[ Frontend (ReactJS / Angular / Bootstrap) ]
+            |
+            v
+[ Backend (Django / Flask API Layer) ]
+            |
+            +---------------------+
+            |                     |
+            v                     v
+[ Authentication Module ]   [ Role-Based Access Control (RBAC) ]
+            |
+            v
+[ Token-Based Auth (DRF Token or JWT) ]
+            |
+            v
+[ API Gateway & Routing (RESTful APIs) ]
+            |
+            v
+[ Core Services Layer ]
+     |          |             |                |
+     v          v             v                v
+[ Video  ] [ EHR Sync ] [ AI Modules ]  [ Analytics Engine ]
+[ Calls  ] [ (FHIR/HL7) ] [ Diagnosis/NLP ] [ Usage & Health Trends ]
+     |          |             |                |
+     +----------+-------------+----------------+
+            |
+            v
+[ Secure Database Layer ]
+(PostgreSQL / MongoDB / Oracle / EHR DB)
+            |
+            v
+[ File Storage ]
+(Encrypted Medical Records, Media Files via AWS S3 / Azure Blob)
+            |
+            v
+[ Logging & Monitoring ]
+(Docker, Kubernetes, Jenkins, Grafana, ELK Stack)
+            |
+            v
+[ CI/CD Pipeline ]
+(GitHub Actions / Jenkins / Docker Build & Deploy)
+            |
+            v
+[ Hosting Platform ]
+(AWS / Azure / GCP with Load Balancer & Auto-scaling)
+✅ Key Technologies:
+Frontend: ReactJS, Bootstrap, JS, HTML5
+
+Backend: Django/DRF, Flask, Node.js
+
+Authentication: Token-based (JWT or DRF Token), Role-based
+
+Video Calls: WebRTC, OpenTok, Jitsi Meet
+
+EHR Integration: FHIR, HL7 API
+
+AI Models: PyTorch (e.g., Sleep Stage Classification), TensorFlow, Transformers (e.g., SleepTransformers)
+
+Database: PostgreSQL, Oracle, MongoDB
+
+Cloud: AWS / Azure / GCP
+
+CI/CD: Jenkins, Docker, Kubernetes
