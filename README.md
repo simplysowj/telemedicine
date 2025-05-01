@@ -41,6 +41,56 @@ cd frontend
 npm install
 npm run build
 
+# 🏥 Telemedicine Platform
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/Django-4.0-brightgreen)](https://www.djangoproject.com/)
+
+## 📌 Overview
+A HIPAA-compliant telemedicine solution featuring:
+- Secure doctor-patient video consultations
+- EHR integration with AI diagnostics
+- Real-time appointment scheduling
+- Role-based access control (Admin/Doctor/Patient)
+
+## � Core Components
+
+### Backend (Django REST)
+- **Authentication**: JWT with RBAC
+- **EHR Module**: FHIR/HL7 standards
+- **Appointment Engine**: Calendar sync
+- **AI Services**: Containerized ML models
+
+### Frontend (React)
+- Doctor Portal (Patient management, EHR viewer)
+- Patient Portal (Appointment booking, Video call)
+- Admin Dashboard (Analytics, User management)
+
+### Infrastructure
+- PostgreSQL (Relational data)
+- MongoDB (EHR documents)
+- Redis (Caching/sessions)
+- Docker/Kubernetes deployment
+
+## 🚀 Quick Start
+
+```bash
+# Clone repo
+git clone https://github.com/yourusername/telemedicine-platform.git
+
+# Backend setup
+cd backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+
+# Frontend setup
+cd ../frontend
+npm install
+npm start
+
 # Database setup (PostgreSQL)
 createdb telemedicine
 python manage.py migrate
