@@ -1,5 +1,7 @@
 # 🏥 Telemedicine Platform
 
+https://claude.ai/public/artifacts/9d16ad2b-6869-4249-86a8-2c842fe00ead 
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/Django-4.0-brightgreen)](https://www.djangoproject.com/)
