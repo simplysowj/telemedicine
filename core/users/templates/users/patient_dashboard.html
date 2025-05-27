@@ -1,12 +1,94 @@
-<h2>Welcome, {{ user.username }} (Patient)</h2>
-<p>This is your dashboard.</p>
-<ul>
-    <li><a href="#">View Medical Records</a></li>
-    <li><a href="#">Request Appointment</a></li>
-    <li><a href="#">Consult with Doctor</a></li>
-</ul>
-<a href="{% url 'logout' %}">Logout</a>
-<h2>Welcome to your Patient Dashboard!</h2>
-<p>Click the button below to start a video consultation with your doctor:</p>
-<a href="{% url 'video_call' room_name='unique_room_123' %}">Start Video Call</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f9;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
 
+        .dashboard-container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            width: 100%;
+        }
+
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        p {
+            color: #34495e;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        ul li {
+            margin: 15px 0;
+        }
+
+        ul a, .video-call-link, .logout-link {
+            display: inline-block;
+            background-color: #1abc9c;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        ul a:hover, .video-call-link:hover, .logout-link:hover {
+            background-color: #16a085;
+        }
+
+        .logout-link {
+            display: block;
+            margin: 30px auto 0;
+            text-align: center;
+            width: fit-content;
+        }
+
+        .video-call-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Welcome, {{ user.username }} (Patient)</h2>
+        <p>This is your dashboard.</p>
+
+        <ul>
+            <li><a href="https://myidentity.platform.athenahealth.com/oauth2/auset0ja9xZ2Hniep296/v1/authorize?client_id=0oa5jhhy36lw4YE6S297&code_challenge=IjEEA9EKUxsz7p7ObREc-fGUOm4BYEWFUtXhi1hpsUE&code_challenge_method=S256&nonce=cwU6Gv4E2CAz5IkBBlURz6xI8syxgVPEAaDhXRQzILZ5hAbZd0yRu3eh488GcqzG&redirect_uri=https%3A%2F%2Fpxppapp.px.athena.io%2Flogin&response_type=code&state=9ctNxIUPJWN2DywF4XBNNlSeYlv1UrfYJvhjl6PMezRYXNEtnhFiVxF2lR00gBM8&scope=openid%20email%20communicator.external_accounts.read">View Medical Records</a></li>
+            <li><a href="https://mail.google.com/">Request Appointment</a></li>
+            <li><a href="{% url 'rag_chat' %}">Start chat with AI-BOT</a></li>
+        </ul>
+
+        <a href="{% url 'logout' %}" class="logout-link">Logout</a>
+
+        <div class="video-call-container">
+            <h2>Welcome to your Patient Dashboard!</h2>
+            <p>Click the button below to start a video consultation with your doctor:</p>
+            <a href="{% url 'video_call' room_name='unique_room_123' %}" class="video-call-link">Start Video Call</a>
+        </div>
+    </div>
+</body>
+</html>
