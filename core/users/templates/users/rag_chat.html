@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ask AI-BOT (Telemedicine Assistant)</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7f9;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .chat-container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #16a085;
+    }
+
+    .answer-box {
+      margin-top: 30px;
+      background-color: #ecf9f1;
+      padding: 20px;
+      border-radius: 6px;
+      border-left: 5px solid #1abc9c;
+    }
+
+    .answer-box h3 {
+      margin-top: 0;
+      color: #27ae60;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <h2>Ask AI-BOT (Telemedicine Assistant)</h2>
+    <form method="post">
+      {% csrf_token %}
+      <label for="question">Your Question:</label>
+      <input type="text" name="question" id="question" required value="{{ question|default_if_none:'' }}">
+    
+      <button type="submit">Ask</button>
+    </form>
+
+    {% if answer %}
+      <div class="answer-box">
+    <h3>Your Question:</h3>
+
+    <p>{{ question }}</p>
+    <h3>AI-BOT Answer:</h3>
+        <p>{{ answer }}</p>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>
