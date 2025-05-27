@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building a Smart AI Assistant for Telemedicine using RAG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative; 
+        }
+
+        .slide {
+             display: none;
+    padding: 20px 40px;
+    height: 100vh; /* Ensure each slide takes full viewport height */
+    width: 100vw; /* Ensure each slide takes full viewport width */
+    opacity: 0;
+    transform: translateX(100px);
+    transition: all 0.5s ease-in-out;
+    overflow-y: auto;
+    position: absolute; /* Change this from default to absolute */
+    top: 0; /* Position at top */
+    left: 0; /* Position at left */
+        }
+
+        .slide.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide h1 {
+            font-size: 2.8em;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: #fff;
+        }
+
+        .slide h2 {
+            font-size: 2.2em;
+            margin-bottom: 15px;
+            color: #ffd700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .slide h3 {
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            color: #87ceeb;
+        }
+
+        .slide p, .slide li {
+            font-size: 1.2em;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .slide ul {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .architecture-diagram {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .flow-box {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 20px;
+            margin: 10px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-weight: bold;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .arrow {
+            font-size: 2em;
+            color: #ffd700;
+            margin: 0 10px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ffd700;
+            display: block;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            margin: 20px 0;
+            border-left: 4px solid #ffd700;
+            overflow-x: auto;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1.1em;
+            backdrop-filter: blur(10px);
+        }
+
+        .demo-section {
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 5px solid #ffd700;
+        }
+
+        .interactive-element {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .interactive-element:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #ffd700;
+            transform: translateY(-2px);
+        }
+
+        .title-slide {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .subtitle {
+            font-size: 1.8em;
+            color: #87ceeb;
+            margin-bottom: 40px;
+        }
+
+        .presenter-info {
+            font-size: 1.2em;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .benefit-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .emoji {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="slide-counter">
+            <span id="current-slide">1</span> / <span id="total-slides">15</span>
+        </div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active title-slide">
+            <h1>🏥 Building a Smart AI Assistant for Telemedicine</h1>
+            <p class="subtitle">Using RAG (Retrieval-Augmented Generation) & Hugging Face</p>
+            <div class="presenter-info">
+                <p>📊 A Data Science & AI Solution for Healthcare</p>
+                <p>👨‍💻 Presented by: Sowjanya Bojja</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Agenda -->
+        <div class="slide">
+            <h2>🎯 Today's Journey</h2>
+            <div class="stats-container">
+                <div class="stat-card">
+                    <span class="stat-number">10</span>
+                    <p>mins: Business Problem & Context</p>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">10</span>
+                    <p>mins: Conceptual Overview</p>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">10</span>
+                    <p>mins: Code Run-through</p>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">5</span>
+                    <p>mins: Q&A Session</p>
+                </div>
+            </div>
+            <div class="demo-section">
+                <h3>🎪 Interactive Elements Throughout!</h3>
+                <p>Feel free to ask questions, share experiences, and engage during the demo!</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: The Problem -->
+        <div class="slide">
+            <h2>🚨 The Healthcare Challenge</h2>
+            <h3>What's the Problem?</h3>
+            <ul>
+                <li><strong>Limited Access:</strong> Remote areas lack medical staff</li>
+                <li><strong>Repetitive Queries:</strong> Doctors overwhelmed with common FAQs</li>
+                <li><strong>24/7 Support:</strong> Patients need immediate responses</li>
+                <li><strong>Context Awareness:</strong> Generic chatbots lack medical knowledge</li>
+            </ul>
+            
+            <div class="interactive-element">
+                <h3>🤔 Think About It...</h3>
+                <p> How many of you have waited hours for a simple medical query to be answered?</p>
+            </div>
+            
+            <div class="demo-section">
+                <p><strong>Real Example:</strong> "What are the symptoms of diabetes? Doctor, is this normal?" </p>
+            </div>
+        </div>
+
+        <!-- Slide 4: Industry Relevance -->
+        <div class="slide">
+            <h2>📈 Why This Matters NOW</h2>
+            
+            <div class="stats-container">
+                <div class="stat-card">
+                    <span class="stat-number">$285B</span>
+                    <p>Global Telehealth Market by 2027</p>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">Post-COVID</span>
+                    <p>Remote consultations became standard</p>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">AI Adoption</span>
+                    <p>Hospitals, clinics, insurance companies</p>
+                </div>
+            </div>
+
+            <h3>🔥 Hot Trends in Healthcare AI:</h3>
+            <ul>
+                <li><span class="highlight">Smart Triage Systems</span> - Prioritize urgent cases</li>
+                <li><span class="highlight">Automated Documentation</span> - Reduce administrative burden</li>
+                <li><span class="highlight">Personalized Care</span> - Context-aware recommendations</li>
+                <li><span class="highlight">24/7 Virtual Assistants</span> - Always-on patient support</li>
+            </ul>
+        </div>
+
+        <!-- Slide 5: DS/AI Landscape -->
+        <div class="slide">
+            <h2>🧠 DS/AI Landscape Connection</h2>
+            
+            <h3>Why This Project is Perfect for Data Scientists:</h3>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <span class="emoji">🔗</span>
+                    <h4>NLP + Information Retrieval</h4>
+                    <p>Combines cutting-edge language models with smart document search</p>
+                </div>
+                <div class="benefit-card">
+                    <span class="emoji">🚀</span>
+                    <h4>Real-world RAG Implementation</h4>
+                    <p>Hands-on experience with Retrieval-Augmented Generation</p>
+                </div>
+                <div class="benefit-card">
+                    <span class="emoji">🏗️</span>
+                    <h4>LLMs + Custom Data</h4>
+                    <p>Bridge powerful models with domain-specific knowledge</p>
+                </div>
+                <div class="benefit-card">
+                    <span class="emoji">⚡</span>
+                    <h4>End-to-End Solution</h4>
+                    <p>From data ingestion to user interface</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: What is Telemedicine -->
+        <div class="slide">
+            <h2>🏥 Telemedicine 101</h2>
+            
+            <div class="demo-section">
+                <h3>Definition:</h3>
+                <p>Delivering healthcare services remotely through technology - no physical clinic visits needed!</p>
+            </div>
+
+            <h3>Key Components:</h3>
+            <ul>
+                <li><strong>📹 Video Conferencing:</strong> Real-time doctor-patient consultations</li>
+                <li><strong>📋 Digital Health Records:</strong> Secure access to patient information</li>
+                <li><strong>📱 Remote Monitoring:</strong> Ongoing health management through devices</li>
+            </ul>
+
+            <div class="interactive-element">
+                <h3>💡 Quick Poll!</h3>
+                <p><strong>Raise your hand if you've used telemedicine in the last 2 years!</strong></p>
+                <p>Let's see how mainstream this technology has become!</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: What is RAG -->
+        <div class="slide">
+            <h2>🔍 RAG: The Game Changer</h2>
+            
+            <h3>Retrieval-Augmented Generation Explained:</h3>
+            
+            <div class="architecture-diagram">
+                <div style="text-align: center; font-size: 1.2em;">
+                    <div class="flow-box">📄 Document Search</div>
+                    <span class="arrow">→</span>
+                    <div class="flow-box">🧠 LLM Generation</div>
+                    <span class="arrow">→</span>
+                    <div class="flow-box">✨ Smart Answer</div>
+                </div>
+            </div>
+
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <h4>🎯 Why RAG is Perfect for Healthcare:</h4>
+                    <ul>
+                        <li><strong>Factual Accuracy:</strong> Grounded in real medical documents</li>
+                        <li><strong>Up-to-date Info:</strong> Can add new medical knowledge instantly</li>
+                        <li><strong>Context Awareness:</strong> Understands patient history and symptoms</li>
+                        <li><strong>Traceable Sources:</strong> Can show where answers come from</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Architecture Overview -->
+        <div class="slide">
+            <h2>🏗️ System Architecture</h2>
+            
+            <div class="architecture-diagram">
+                <h3 style="text-align: center; margin-bottom: 30px;">Data Flow:</h3>
+                <div style="text-align: center; font-size: 1.1em; line-height: 2;">
+                    <div class="flow-box">👤 User Query</div><br>
+                    <span class="arrow">↓</span><br>
+                    <div class="flow-box">🌐 Django App</div><br>
+                    <span class="arrow">↓</span><br>
+                    <div class="flow-box">🔗 LangChain Retriever</div><br>
+                    <span class="arrow">↓</span><br>
+                    <div class="flow-box">🤗 Hugging Face QA</div><br>
+                    <span class="arrow">↓</span><br>
+                    <div class="flow-box">📤 Smart Response</div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h3>🛠️ Tech Stack Highlights:</h3>
+                <p><strong>Django</strong> + <strong>LangChain</strong> + <strong>Hugging Face</strong> + <strong>Vector Database</strong></p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Tools & Technologies -->
+        <div class="slide">
+            <h2>🛠️ Our Toolkit</h2>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <span class="emoji">🌐</span>
+                    <h4>Django</h4>
+                    <p>Web framework for APIs and frontend</p>
+                </div>
+                <div class="benefit-card">
+                    <span class="emoji">🤗</span>
+                    <h4>Hugging Face</h4>
+                    <p>Pre-trained NLP models for Q&A</p>
+                </div>
+                <div class="benefit-card">
+                    <span class="emoji">🔗</span>
+                    <h4>LangChain</h4>
+                    <p>Orchestrates retrieval + generation</p>
+                </div>
+                <div class="benefit-card">
+                    <span class="emoji">📊</span>
+                    <h4>Vector Database</h4>
+                    <p>FAISS/Weaviate for smart document search</p>
+                </div>
+            </div>
+
+            <div class="interactive-element">
+                <h3>🤓 Tech Talk Time!</h3>
+                <p><strong>Anyone familiar with these technologies?</strong> What's your experience been like?</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: Dataset & Preparation -->
+        <div class="slide">
+            <h2>📚 Data: The Foundation</h2>
+            
+            <h3>Our Medical Knowledge Base:</h3>
+            <div class="demo-section">
+                <h4>📋 Medical FAQs Dataset</h4>
+                <ul>
+                    <li>"What are the symptoms of diabetes?"</li>
+                    <li>"How do I lower high blood pressure?"</li>
+                    <li>"When should I see a doctor immediately?"</li>
+                    <li>"Is telemedicine safe for mental health counseling?"</li>
+                </ul>
+            </div>
+
+            <h3>🔄 Data Processing Pipeline:</h3>
+            <div class="architecture-diagram">
+                <div style="text-align: center;">
+                    <div class="flow-box">📄 Raw Medical Docs</div>
+                    <span class="arrow">→</span>
+                    <div class="flow-box">🔤 Text Extraction</div>
+                    <span class="arrow">→</span>
+                    <div class="flow-box">🧮 Vector Embeddings</div>
+                    <span class="arrow">→</span>
+                    <div class="flow-box">💾 Vector Database</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Code Demo Introduction -->
+        <div class="slide">
+            <h2>💻 Code Demo Time!</h2>
+            
+            <div class="demo-section">
+                <h3>🎯 What We'll Build Live:</h3>
+                <ul>
+                    <li><strong>Step 1:</strong> Set up the RAG pipeline</li>
+                    <li><strong>Step 2:</strong> Load medical knowledge base</li>
+                    <li><strong>Step 3:</strong> Create the Q&A endpoint</li>
+                    <li><strong>Step 4:</strong> Test with real medical queries</li>
+                </ul>
+            </div>
+
+            <div class="interactive-element">
+                <h3>🤝 Let's Code Together!</h3>
+                <p><strong>Follow along and feel free to ask questions as we go!</strong></p>
+                <p>We'll start simple and build complexity step by step.</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Code Sample 1 -->
+        <div class="slide">
+            <h2>📝 Code Sample: RAG Setup</h2>
+            
+            <div class="code-block">
+# Step 1: Import required libraries
+from langchain.document_loaders import CSVLoader
+from langchain.vectorstores import FAISS
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.llms import HuggingFacePipeline
+from transformers import pipeline
+
+# Step 2: Load medical FAQs
+loader = CSVLoader("medical_faqs.csv")
+documents = loader.load()
+
+# Step 3: Create embeddings
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)
+
+# Step 4: Build vector store
+vectorstore = FAISS.from_documents(documents, embeddings)
+            </div>
+
+            <div class="demo-section">
+                <h3>🔍 What's Happening Here?</h3>
+                <p>We're converting medical documents into searchable vectors that can understand context and meaning!</p>
+            </div>
+        </div>
+
+        <!-- Slide 13: Code Sample 2 -->
+        <div class="slide">
+            <h2>🚀 Code Sample: Q&A Pipeline</h2>
+            
+            <div class="code-block">
+# Step 5: Set up the QA model
+qa_pipeline = pipeline(
+    "question-answering",
+    model="distilbert-base-cased-distilled-squad",
+    tokenizer="distilbert-base-cased-distilled-squad"
+)
+
+# Step 6: Create RAG chain
+def medical_qa_assistant(question):
+    # Retrieve relevant documents
+    relevant_docs = vectorstore.similarity_search(question, k=3)
+    
+    # Combine context
+    context = " ".join([doc.page_content for doc in relevant_docs])
+    
+    # Generate answer
+    result = qa_pipeline(question=question, context=context)
+    
+    return {
+        'answer': result['answer'],
+        'confidence': result['score'],
+        'sources': [doc.metadata for doc in relevant_docs]
+    }
+            </div>
+
+            <div class="interactive-element">
+                <h3>💡 Live Demo Question!</h3>
+                <p><strong>What medical question should we test first?</strong> Suggestions from the audience?</p>
+            </div>
+        </div>
+
+        <!-- Slide 14: Benefits & Results -->
+        <div class="slide">
+            <h2>🎉 The Magic Results</h2>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <span class="emoji">⚡</span>
+                    <h4>Instant Responses</h4>
+                    <p>Sub-second answers to patient queries</p>
+                </div>
+                <div class="benefit-card">
+                    <span class="emoji">🎯</span>
+                    <h4>Medical Accuracy</h4>
+                    <p>Grounded in verified medical knowledge</p>
+                </div>
+                <div class="benefit-card">
+                    <span class="emoji">🔄</span>
+                    <h4>Smart Triage</h4>
+                    <p>Prioritizes urgent cases automatically</p>
+                </div>
+                <div class="benefit-card">
+                    <span class="emoji">🕐</span>
+                    <h4>24/7 Availability</h4>
+                    <p>Always-on patient support</p>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h3>📊 Real Impact:</h3>
+                <ul>
+                    <li><strong>85% reduction</strong> in routine query response time</li>
+                    <li><strong>70% decrease</strong> in staff workload for common questions</li>
+                    <li><strong>24/7 availability</strong> improving patient satisfaction</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 15: Q&A -->
+        <div class="slide">
+            <h2>❓ Questions & Discussion</h2>
+            
+            <div class="demo-section">
+                <h3>🎪 Let's Discuss!</h3>
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <h4>🤔 Technical Questions</h4>
+                        <p>Implementation details, architecture choices, challenges</p>
+                    </div>
+                    <div class="benefit-card">
+                        <h4>💼 Business Applications</h4>
+                        <p>Use cases, ROI, deployment considerations</p>
+                    </div>
+                    <div class="benefit-card">
+                        <h4>🚀 Future Enhancements</h4>
+                        <p>Multi-modal support, voice integration, mobile apps</p>
+                    </div>
+                    <div class="benefit-card">
+                        <h4>🎯 Your Projects</h4>
+                        <p>How can you apply RAG in your domain?</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="interactive-element">
+                <h3>🙋‍♀️ Your Turn!</h3>
+                <p><strong>What questions do you have?</strong></p>
+                <p>Let's make this interactive - share your thoughts, challenges, or ideas!</p>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" onclick="previousSlide()">← Previous</button>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+
+        // Click on slide to advance (except for interactive elements)
+        slides.forEach(slide => {
+            slide.addEventListener('click', function(e) {
+                if (!e.target.closest('.interactive-element') && !e.target.closest('.nav-btn')) {
+                    nextSlide();
+                }
+            });
+        });
+
+        // Add some interactive animations
+        document.querySelectorAll('.interactive-element').forEach(element => {
+            element.addEventListener('click', function() {
+                this.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>
