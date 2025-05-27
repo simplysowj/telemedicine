@@ -7,6 +7,41 @@ from .forms import CustomUserCreationForm
 from .models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
+from django.views.decorators.csrf import csrf_exempt
+from langchain.chains import RetrievalQA
+from langchain.chat_models import ChatOpenAI
+from .rag_utils import vectorstore 
+from langchain.llms import HuggingFaceHub
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from .rag_utils import vectorstore
+from langchain.chains import RetrievalQA
+from langchain.llms import HuggingFacePipeline
+from transformers import pipeline
+
+from transformers import pipeline
+from .rag_utils import vectorstore
+
+qa_pipeline = pipeline("question-answering", model="distilbert-base-uncased-distilled-squad")
+
+@csrf_exempt
+def rag_chat_view(request):
+    answer = None
+    question=None
+    if request.method == 'POST':
+        question = request.POST.get('question')
+        retriever = vectorstore.as_retriever()
+        docs = retriever.get_relevant_documents(question)
+        context = "\n".join([doc.page_content for doc in docs])
+
+        result = qa_pipeline({
+            "question": question,
+            "context": context
+        })
+        answer = result['answer']
+
+    return render(request, 'users/rag_chat.html', {"question": question, "answer": answer})
+
 
 def register(request):
     if request.method == "POST":
